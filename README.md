@@ -1,0 +1,1 @@
+ModGuard is a small utility mod that warns you when you open a world with a different modlist compared to the last time
