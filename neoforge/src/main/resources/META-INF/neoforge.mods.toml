@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "modguard"
+version = "${version}"
+displayName = "ModGuard"
+authors = "ZedDevStuff"
+description = '''
+Small mod that keeps track of changes in your modlist
+'''
+#logoFile = ""
+
+[[dependencies.modguard]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.modguard]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+
+[[mixins]]
+config = "modguard.mixins.json"

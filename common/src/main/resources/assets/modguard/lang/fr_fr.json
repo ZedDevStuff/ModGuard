@@ -1,0 +1,8 @@
+{
+  "prompt.modguard.modlist_changed": "On dirait que la liste des mods a changée depuis la dernière fois que vous avez ouvert ce monde",
+  "generic.modguard.added": "Ajouté: %s",
+  "generic.modguard.removed": "Supprimé: %s",
+  "generic.modguard.modified": "Modifié: %s",
+  "generic.modguard.unchanged": "Inchangé: %s",
+  "generic.modguard.changes": "Changements"
+}

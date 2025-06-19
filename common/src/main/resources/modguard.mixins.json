@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "dev.zeddevstuff.modguard.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+    "CreateWorldScreenMixin",
+    "WorldListEntryMixin"
+  ],
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

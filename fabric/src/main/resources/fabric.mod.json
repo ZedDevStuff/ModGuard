@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "modguard",
+  "version": "${version}",
+  "name": "ModGuard",
+  "description": "Small mod that keeps track of changes in your modlist",
+  "authors": [
+    "ZedDevStuff"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/modguard"
+  },
+  "license": "MIT",
+  "icon": "assets/modguard/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.zeddevstuff.modguard.fabric.ModGuardFabric"
+    ],
+    "client": [
+      "dev.zeddevstuff.modguard.fabric.client.ModGuardFabricClient"
+    ]
+  },
+  "mixins": [
+    "modguard.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
