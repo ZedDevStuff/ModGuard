@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class ModGuardAgent
 {
@@ -57,6 +58,33 @@ public class ModGuardAgent
         // TODO: Use the configuration to determine how to compare the mod lists. In the meantime we will just return a can't proceed report if anything changed at all.
         List<LoaderUtils.ModEntry> currentModlist = LoaderUtils.getMods();
         Diff<LoaderUtils.ModEntry> diff = Diff.modlistDiff(savedModlist, currentModlist);
+        diff.getAdded().removeIf(mod -> !ModGuard.getConfig().notifyModAdditions);
+        diff.getModified().removeIf(mod -> {
+            Optional<Version> oldVersion = Version.tryParse(savedModlist.stream()
+                    .filter(entry -> entry.id().equals(mod.id()))
+                    .findFirst()
+                    .map(LoaderUtils.ModEntry::version)
+                    .orElse("0.0.0"));
+            Optional<Version> newVersion = Version.tryParse(mod.version());
+            if(oldVersion.isEmpty() || newVersion.isEmpty()) return true;
+            if(ModGuard.getConfig().changeType == ModGuardConfig.ChangeType.MAJOR)
+            {
+                return oldVersion.get().getMajor() != newVersion.get().getMajor();
+            }
+            else if(ModGuard.getConfig().changeType == ModGuardConfig.ChangeType.MINOR)
+            {
+                return oldVersion.get().getMajor() != newVersion.get().getMajor() ||
+                        oldVersion.get().getMinor() != newVersion.get().getMinor();
+            }
+            else if(ModGuard.getConfig().changeType == ModGuardConfig.ChangeType.PATCH)
+            {
+                return oldVersion.get().getMajor() != newVersion.get().getMajor() ||
+                        oldVersion.get().getMinor() != newVersion.get().getMinor() ||
+                        oldVersion.get().getPatch() != newVersion.get().getPatch();
+            }
+            return false;
+        });
+        diff.getRemoved().removeIf(mod -> !ModGuard.getConfig().notifyModRemovals);
         boolean canProceed = diff.getAdded().isEmpty() && diff.getRemoved().isEmpty() && diff.getModified().isEmpty();
         report = new ModGuardReport(diff, canProceed);
         return report;

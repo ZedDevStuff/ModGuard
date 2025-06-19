@@ -5,9 +5,12 @@ package dev.zeddevstuff.modguard;
 public final class ModGuard
 {
     public static final String MOD_ID = "modguard";
+    private static ModGuardConfig config;
+    public static ModGuardConfig getConfig() { return config; }
 
     public static void init()
     {
-        // Write common init code here.
+        // TODO: Load the config file
+        config = new ModGuardConfig();
     }
 }
