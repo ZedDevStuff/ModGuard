@@ -1,7 +1,6 @@
 package dev.zeddevstuff.modguard;
 
 import com.google.gson.Gson;
-import net.minecraft.FileUtil;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -12,10 +11,10 @@ import java.util.Optional;
 public class ModGuardAgent
 {
     private static final Gson GSON = new Gson();
-    private File worldDir;
+    private final File worldDir;
     public File getWorldDir() { return worldDir; }
     public boolean isValid() { return worldDir.isDirectory() && modGuardFile.exists(); }
-    private File modGuardFile;
+    private final File modGuardFile;
     private List<LoaderUtils.ModEntry> savedModlist = List.of();
     private ModGuardReport report;
 
@@ -55,6 +54,7 @@ public class ModGuardAgent
             report = ModGuardReport.pass();
             return report;
         }
+        if(report != null) return report;
         // TODO: Use the configuration to determine how to compare the mod lists. In the meantime we will just return a can't proceed report if anything changed at all.
         List<LoaderUtils.ModEntry> currentModlist = LoaderUtils.getMods();
         Diff<LoaderUtils.ModEntry> diff = Diff.modlistDiff(savedModlist, currentModlist);
@@ -67,20 +67,20 @@ public class ModGuardAgent
                     .orElse("0.0.0"));
             Optional<Version> newVersion = Version.tryParse(mod.version());
             if(oldVersion.isEmpty() || newVersion.isEmpty()) return true;
-            if(ModGuard.getConfig().changeType == ModGuardConfig.ChangeType.MAJOR)
+            if(ModGuard.getConfig().changeType == ModGuardConfig.ChangeType.MAJOR_ONLY)
             {
-                return oldVersion.get().getMajor() != newVersion.get().getMajor();
+                return oldVersion.get().getMajor() == newVersion.get().getMajor();
             }
-            else if(ModGuard.getConfig().changeType == ModGuardConfig.ChangeType.MINOR)
+            else if(ModGuard.getConfig().changeType == ModGuardConfig.ChangeType.MINOR_OR_GREATER)
             {
-                return oldVersion.get().getMajor() != newVersion.get().getMajor() ||
-                        oldVersion.get().getMinor() != newVersion.get().getMinor();
+                return oldVersion.get().getMajor() == newVersion.get().getMajor() &&
+                        oldVersion.get().getMinor() == newVersion.get().getMinor();
             }
-            else if(ModGuard.getConfig().changeType == ModGuardConfig.ChangeType.PATCH)
+        else if(ModGuard.getConfig().changeType == ModGuardConfig.ChangeType.PATCH_OR_GREATER)
             {
-                return oldVersion.get().getMajor() != newVersion.get().getMajor() ||
-                        oldVersion.get().getMinor() != newVersion.get().getMinor() ||
-                        oldVersion.get().getPatch() != newVersion.get().getPatch();
+                return oldVersion.get().getMajor() == newVersion.get().getMajor() &&
+                        oldVersion.get().getMinor() == newVersion.get().getMinor() &&
+                        oldVersion.get().getPatch() == newVersion.get().getPatch();
             }
             return false;
         });

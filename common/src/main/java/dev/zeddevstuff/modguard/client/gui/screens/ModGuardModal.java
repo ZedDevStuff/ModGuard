@@ -10,16 +10,14 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class ModGuardModal extends Screen
 {
-    private Screen parentScreen;
+    private final Screen parentScreen;
     private final StringWidget titleWidget;
     private final ScrollableTextPanel contentWidget;
     private final Button cancelButton, proceedButton, backupButton;
@@ -94,7 +92,7 @@ public class ModGuardModal extends Screen
     {
         assert minecraft != null;
         minecraft.setScreen(parentScreen);
-    };
+    }
     private void proceedClicked(Button button)
     {
         agent.overwriteFile();
@@ -114,17 +112,17 @@ public class ModGuardModal extends Screen
         for(var mod : report.diff.getAdded())
         {
             content.add(Component.translatable("generic.modguard.added", mod.id() + ":" + mod.version())
-                    .withStyle(ChatFormatting.GREEN));
+                .withStyle(ChatFormatting.GREEN));
         }
         for (var mod : report.diff.getRemoved())
         {
             content.add(Component.translatable("generic.modguard.removed", mod.id() + ":" + mod.version())
-                    .withStyle(ChatFormatting.RED));
+                .withStyle(ChatFormatting.RED));
         }
         for(var mod : report.diff.getModified())
         {
-            content.add(Component.translatable("generic.modguard.modified", mod.id() + ":" + mod.version())
-                    .withStyle(ChatFormatting.AQUA));
+            content.add(Component.translatable("generic.modguard.modified", mod.id() + " - " + report.diff.getModifiedOld().get(report.diff.getModified().indexOf(mod)).version() + " -> " + mod.version())
+                .withStyle(ChatFormatting.AQUA));
         }
         var modal = new ModGuardModal(
             Component.translatable("prompt.modguard.modlist_changed"),

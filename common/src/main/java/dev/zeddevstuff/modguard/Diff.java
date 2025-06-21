@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class Diff<T>
 {
-    private List<T> added = new ArrayList<>();
+    private final List<T> added = new ArrayList<>();
     public List<T> getAdded() { return added; }
-    private List<T> removed = new ArrayList<>();
+    private final List<T> removed = new ArrayList<>();
     public List<T> getRemoved() { return removed; }
-    private List<T> unchanged = new ArrayList<>();
+    private final List<T> unchanged = new ArrayList<>();
     public List<T> getUnchanged() { return unchanged; }
-    private List<T> modified = new ArrayList<>();
+    private final List<T> modified = new ArrayList<>();
     public List<T> getModified() { return modified; }
+    private final List<T> modifiedOld = new ArrayList<>();
+    public List<T> getModifiedOld() { return modifiedOld; }
 
     public Diff(List<T> left, List<T> right)
     {
@@ -50,6 +50,7 @@ public class Diff<T>
                 if (changed.apply(item, rightItem.get()))
                 {
                     modified.add(rightItem.get());
+                    modifiedOld.add(item);
                 }
                 else
                 {
@@ -60,11 +61,10 @@ public class Diff<T>
                 removed.add(item);
             }
         }
-        for(int i = 0; i < right.size(); i++)
+        for (T item : right)
         {
-            T item = right.get(i);
             Optional<T> leftItem = find.apply(item, left);
-            if(leftItem.isEmpty())
+            if (leftItem.isEmpty())
             {
                 added.add(item);
             }
